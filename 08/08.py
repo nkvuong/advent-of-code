@@ -37,13 +37,13 @@ print(f'Accumulator before infinite loop is {execute(instructions)[0]}')
 
 pointer = 0
 visited = execute(instructions)[2]
-potential_landing = [False for i in instructions]
+potential_landing = set()
 
 # find all potential spaces that could lead to the end
 for pointer in range(len(instructions)-1, 0, -1):
     if 'jmp -' in instructions[pointer]:
         break
-    potential_landing[pointer] = True
+    potential_landing.add(pointer)
 
 candidate = 0
 start = pointer
@@ -55,17 +55,17 @@ else:
     while True:
         pointer -= 1
         op, arg = instructions[pointer][:3], int(instructions[pointer][4:])
-        if potential_landing[pointer]:
+        if pointer in potential_landing:
             continue
         # a nop that could jump to to a potential space
-        elif op == 'nop' and (pointer in visited) and potential_landing[pointer+arg]:
+        elif op == 'nop' and (pointer in visited) and (pointer+arg in potential_landing):
             candidate = pointer
             break
         # a jump that has not been visited, but would lead to a potential space
-        elif op == 'jmp' and (pointer not in visited) and (not potential_landing[pointer]) and (potential_landing[pointer+arg]):
+        elif op == 'jmp' and (pointer not in visited) and (pointer not in potential_landing) and (pointer+arg in potential_landing):
             # find the previous jump
             j = pointer - 1
-            while not('jmp' in instructions[pointer]):
+            while not('jmp' in instructions[j]):
                 j -= 1
             # if previous jump is already visited, change it to nop to be able to reach the next jump
             if j in visited:
@@ -73,7 +73,8 @@ else:
                 break
             # if not visited, mark the space between these two jumps as potential
             else:
-                potential_landing[j:pointer] = [True] * (pointer-j+1)
+                for item in (j+1, pointer):
+                    potential_landing.add(item)
                 pointer = start
 
 print(
