@@ -14,9 +14,14 @@ def occupied_directions(row, col, seat_layout, limit):
     return occupied_count
 
 
-inputs = ['test1', 'input']  # the adjacency matrix
+def printseats(grid, iteration):
+    print(f'Iteration {iteration}')
+    print('\n'.join(''.join(x) for x in grid))
+
+
+inputs = ['test1', 'input']
 adjacency = [(i, j) for i in (-1, 0, 1)
-             for j in (-1, 0, 1) if not (i == j == 0)]
+             for j in (-1, 0, 1) if not (i == j == 0)]  # the adjacency matrix
 OCCUPIED, EMPTY, FLOOR = '#L.'
 
 for input in inputs:
@@ -29,8 +34,10 @@ for input in inputs:
     from copy import deepcopy
     seat_layout = deepcopy(original)
     changed = True
+    iteration = 0
     while changed:
-
+        iteration += 1
+        #printseats(seat_layout, iteration)
         previous = deepcopy(seat_layout)
         changed = False
         for r, row in enumerate(seat_layout):
@@ -50,7 +57,10 @@ for input in inputs:
     seat_layout = deepcopy(original)
     max_dist = len(seat_layout)
     changed = True
+    iteration = 0
     while changed:
+        iteration += 1
+        #printseats(seat_layout, iteration)
         previous = deepcopy(seat_layout)
         changed = False
         for r, row in enumerate(seat_layout):
