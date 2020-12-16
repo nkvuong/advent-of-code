@@ -11,12 +11,12 @@ def is_valid(field, rule):
         return False
 
 
-inputs = ['test2', 'input']
+inputs = ['test1', 'test2', 'input']
 for input in inputs:
 
     with open(f'16/{input}', 'r') as f:
-        rules, my_ticket, nearby = [i.split('\n') for i in re.split(
-            '\n\nyour ticket:\n|\n\nnearby tickets:\n', f.read())]
+        rules, my_ticket, nearby = [i.split('\n') for i in
+                                    re.split('\n\nyour ticket:\n|\n\nnearby tickets:\n', f.read())]
     rules = [re.split(':| or ', rule) for rule in rules]
     nearby = [list(map(int, ticket.split(','))) for ticket in nearby]
     my_ticket = list(map(int, my_ticket[0].split(',')))
@@ -26,14 +26,9 @@ for input in inputs:
 
     for i, ticket in enumerate(nearby):
         for field in ticket:
-            valid = False
-            for rule in rules:
-                if is_valid(field, rule):
-                    valid = True
-                    break
-            if not valid:
-                error_rate += field
-                valid_ticket[i] = False
+            valid = any([is_valid(field, rule) for rule in rules])
+            error_rate += field * valid
+            valid_ticket[i] = valid_ticket[i] and valid
 
     # filter out invalid tickets
     nearby = list(compress(nearby, valid_ticket))
