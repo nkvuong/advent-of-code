@@ -23,12 +23,8 @@ for tile in tiles_input:
     pos = 0
     dir = ''
     while len(tile) > 0:
-        if tile.startswith('e') or tile.startswith('w'):
-            dir = tile[:1]
-            tile = tile[1:]
-        else:
-            dir = tile[:2]
-            tile = tile[2:]
+        offset = 1 if tile.startswith('e') or tile.startswith('w') else 2
+        dir, tile = tile[:offset], tile[offset:]
         coord = tuple(map(sum, zip(coord, movement[dir])))
     black_tiles[coord] += 1
 
