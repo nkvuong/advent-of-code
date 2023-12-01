@@ -1,2 +1,3 @@
-# advent-2020
-WIP on solutions to https://adventofcode.com/2020/about
+# Advent of Code
+
+My solutions to [Advent of Code](https://adventofcode.com)
