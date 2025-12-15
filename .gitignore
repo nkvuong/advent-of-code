@@ -1,0 +1,4 @@
+# for rust
+# Ignore generated files
+**/target/
+**/Cargo.lock
