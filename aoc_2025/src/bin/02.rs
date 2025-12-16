@@ -15,53 +15,54 @@ const TEST: &str = "\
 824824821-824824827,2121212118-2121212124
 ";
 
+fn is_valid_id(id: &str, num_substr: usize) -> bool {
+    // string must be evenly divisible by num_substr
+    if id.len() % num_substr != 0 {
+        return true;
+    }
+    let substr_len = id.len() / num_substr;
+    // check each substring matches the next, if there is a mismatch, then return
+    for start in 0..num_substr - 1 {
+        let substr = &id[start * substr_len..(start + 1) * substr_len];
+        let next_substr = &id[(start + 1) * substr_len..(start + 2) * substr_len];
+        if substr != next_substr {
+            return true;
+        }
+    }
+    // all substrings match, it is an invalid id
+    false
+}
+
+fn parse_ids(line: String) -> Vec<(usize, usize)> {
+    let pairs = line.split(',');
+    let ids = pairs.map(|pair| {
+        if !pair.contains('-') {
+            return (0, 0);
+        }
+        let (start, end) = pair.split_once('-').unwrap();
+        let start = start.parse::<usize>().unwrap();
+        let end = end.parse::<usize>().unwrap();
+        (start, end)
+    });
+    ids.collect_vec()
+}
+
 fn main() -> Result<()> {
     start_day(DAY);
 
     //region Part 1
     println!("=== Part 1 ===");
 
-    fn valid_id(id: usize, num_substr: usize) -> bool {
-        let id_string = id.to_string();
-        // string must be evenly divisible by num_substr
-        if id_string.len() % num_substr != 0 {
-            return true;
-        }
-        let substr_len = id_string.len() / num_substr;
-        // check each substring matches the next, if there is a mismatch, then return
-        for start in 0..num_substr - 1 {
-            let substr = &id_string[start * substr_len..(start + 1) * substr_len];
-            let next_substr = &id_string[(start + 1) * substr_len..(start + 2) * substr_len];
-            if substr != next_substr {
-                return true;
-            }
-        }
-        // all substrings match, it is an invalid id
-        false
-    }
-
     fn part1<R: BufRead>(reader: R) -> Result<usize> {
         let ids: Vec<(usize, usize)> = reader
             .lines()
             .flatten()
-            .map(|line| {
-                let pairs = line.split(',');
-                let ids = pairs.map(|pair| {
-                    if !pair.contains('-') {
-                        return (0, 0);
-                    }
-                    let (start, end) = pair.split_once('-').unwrap();
-                    let start = start.parse::<usize>().unwrap();
-                    let end = end.parse::<usize>().unwrap();
-                    (start, end)
-                });
-                ids.collect_vec()
-            })
+            .map(parse_ids)
             .concat();
         let mut answer = 0;
         for (start, end) in ids {
             for id in start..=end {
-                if !valid_id(id, 2) {
+                if !is_valid_id(&id.to_string(), 2) {
                     answer += id;
                 }
             }
@@ -83,26 +84,15 @@ fn main() -> Result<()> {
         let ids: Vec<(usize, usize)> = reader
             .lines()
             .flatten()
-            .map(|line| {
-                let pairs = line.split(',');
-                let ids = pairs.map(|pair| {
-                    if !pair.contains('-') {
-                        return (0, 0);
-                    }
-                    let (start, end) = pair.split_once('-').unwrap();
-                    let start = start.parse::<usize>().unwrap();
-                    let end = end.parse::<usize>().unwrap();
-                    (start, end)
-                });
-                ids.collect_vec()
-            })
+            .map(parse_ids)
             .concat();
         let mut answer = 0;
         for (start, end) in ids {
             for id in start..=end {
                 // check for all possible substring lengths
-                for num_substr in 2..=id.to_string().len() {
-                    if !valid_id(id, num_substr) {
+                let id_string = id.to_string();
+                for num_substr in 2..=(id_string.len() + 1)/2 + 1 {
+                    if !is_valid_id(&id_string, num_substr) {
                         answer += id;
                         break;
                     }
