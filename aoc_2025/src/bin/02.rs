@@ -54,11 +54,7 @@ fn main() -> Result<()> {
     println!("=== Part 1 ===");
 
     fn part1<R: BufRead>(reader: R) -> Result<usize> {
-        let ids: Vec<(usize, usize)> = reader
-            .lines()
-            .flatten()
-            .map(parse_ids)
-            .concat();
+        let ids: Vec<(usize, usize)> = reader.lines().flatten().map(parse_ids).concat();
         let mut answer = 0;
         for (start, end) in ids {
             for id in start..=end {
@@ -81,17 +77,13 @@ fn main() -> Result<()> {
     println!("\n=== Part 2 ===");
 
     fn part2<R: BufRead>(reader: R) -> Result<usize> {
-        let ids: Vec<(usize, usize)> = reader
-            .lines()
-            .flatten()
-            .map(parse_ids)
-            .concat();
+        let ids: Vec<(usize, usize)> = reader.lines().flatten().map(parse_ids).concat();
         let mut answer = 0;
         for (start, end) in ids {
             for id in start..=end {
                 // check for all possible substring lengths
                 let id_string = id.to_string();
-                for num_substr in 2..=(id_string.len() + 1)/2 + 1 {
+                for num_substr in 2..=(id_string.len() + 1) / 2 + 1 {
                     if !is_valid_id(&id_string, num_substr) {
                         answer += id;
                         break;
