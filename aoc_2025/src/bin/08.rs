@@ -38,15 +38,17 @@ struct Box {
     z: isize,
 }
 
-fn box_from_str(s: String) -> Box {
-    let parts: Vec<isize> = s
-        .split(',')
-        .map(|num_str| num_str.parse::<isize>().unwrap())
-        .collect();
-    Box {
-        x: parts[0],
-        y: parts[1],
-        z: parts[2],
+impl Box {
+    fn new(s: String) -> Self {
+        let parts: Vec<isize> = s
+            .split(',')
+            .map(|num_str| num_str.parse::<isize>().unwrap())
+            .collect();
+        Box {
+            x: parts[0],
+            y: parts[1],
+            z: parts[2],
+        }
     }
 }
 
@@ -78,7 +80,7 @@ fn main() -> Result<()> {
     println!("=== Part 1 ===");
 
     fn part1<R: BufRead>(reader: R, num_connections: usize) -> Result<usize> {
-        let boxes: Vec<Box> = reader.lines().flatten().map(box_from_str).collect();
+        let boxes: Vec<Box> = reader.lines().flatten().map(Box::new).collect();
         let num_boxes = boxes.len();
         let distances = get_distances(&boxes);
         // make the closest connections
@@ -130,7 +132,7 @@ fn main() -> Result<()> {
     println!("\n=== Part 2 ===");
 
     fn part2<R: BufRead>(reader: R) -> Result<isize> {
-        let boxes: Vec<Box> = reader.lines().flatten().map(box_from_str).collect();
+        let boxes: Vec<Box> = reader.lines().flatten().map(Box::new).collect();
         let num_boxes = boxes.len();
         let distances = get_distances(&boxes);
         let mut connections: HashMap<usize, HashSet<usize>> = HashMap::with_capacity(num_boxes);
