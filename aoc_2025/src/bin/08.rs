@@ -32,7 +32,6 @@ const TEST: &str = "\
 425,690,689
 ";
 
-#[derive(Debug)]
 struct Box {
     x: isize,
     y: isize,
